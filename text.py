@@ -11,7 +11,7 @@ llm = ChatOllama(model = "llama3",temperature=0,#other parameters...
 embeddings = SentenceTransformerEmbeddings(model_name="all-MiniLM-L6-v2")
 
 documents = [
-    Document(page_content="Rene likes soft boiled eggs.",metadata={"id":0})
+    Document(page_content="./ai_adoption_framework_whitepaper.pdf",metadata={"id":0})
 ]
 
 vector_store = Chroma.from_documents(documents,embedding=embeddings)
@@ -19,7 +19,7 @@ vector_store = Chroma.from_documents(documents,embedding=embeddings)
 qa_chain = RetrievalQA.from_chain_type(
     llm=llm,
     chain_type="stuff",
-    retriever=vector_store.as_retriever(search_kwargs={"k": 1})
+    retriever=vector_store.as_retriever()
 )
 
 queries = input("Enter Prompt: ")

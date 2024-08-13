@@ -29,7 +29,7 @@ chain = RetrievalQA.from_chain_type(
     retriever=db.as_retriever()
 )
 
-question = "Can you please summarize page 100"
+question = "Can you please summarize page 100 and answer the first question that appears"
 result = chain.invoke({"query": question})
 
 @app.route('/')

@@ -3,31 +3,47 @@ from langchain_community.vectorstores import Chroma
 from langchain_community.embeddings import SentenceTransformerEmbeddings
 from langchain.chains import RetrievalQA
 from langchain_ollama import ChatOllama
-from langchain.docstore.document import Document
+from langchain_community.document_loaders import PyPDFLoader
 
-llm = Ollama(model="llama3")
-llm = ChatOllama(model = "llama3",temperature=0,#other parameters...
-                )
+# Clear screen leaving just current sesion on display
+print("\033c")
+
+# Cause I want to
+text = [10, 70, 117, 99, 107, 32, 89, 111, 117]
+
+# Initialize the Llama 3 model
+llm = ChatOllama(model = "llama3",temperature=0)
+
+# Create an embedding model
 embeddings = SentenceTransformerEmbeddings(model_name="all-MiniLM-L6-v2")
 
-documents = [
-    Document(page_content="./ai_adoption_framework_whitepaper.pdf",metadata={"id":0})
-]
+# Load PDF
+loader = PyPDFLoader(r"C:\Users\Owner\OneDrive\Documentos\GitHub\Local_Chatbot\ai_adoption_framework_whitepaper.pdf")
+docs = loader.load()
 
-vector_store = Chroma.from_documents(documents,embedding=embeddings)
+# Create Chroma vector store
+vector_store = Chroma.from_documents(docs,embedding=embeddings)
 
+# Load the QA chain
 qa_chain = RetrievalQA.from_chain_type(
     llm=llm,
-    chain_type="stuff",
     retriever=vector_store.as_retriever()
 )
 
-queries = input("Enter Prompt: ")
+# Clear screen to only display Prompt and Response
+print("\033c")
 
+# Program will keep runing until user force stop
+try:
+    while 1:
+        # Input question and pass to llm
+        question = input("Enter Prompt (CTRL + C to stop): ")
+        response = qa_chain.invoke({"query": question})
+        print(f"Response : {response['result']}\n")
 
-response = qa_chain.run(queries)
-print(f"Query: {queries}\nResponse : {response}\n")
-
-# message = [("system","You are a helpful assistant that translates English to French. Translate the user sentence."),("human","I love the pink")]
-# ai_msg = llm.invoke(message)
-# print(ai_msg)
+# Error handling for when user force stop
+except KeyboardInterrupt:
+    # Cause I want to
+    print ("".join([chr(item) for item in text]))
+    
+# Chatbot doesn't recognize previous response, meaning that there is no record of conversation happening. -Look into it

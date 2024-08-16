@@ -1,9 +1,8 @@
-from langchain_community.llms import Ollama
+from langchain_ollama import ChatOllama
+from langchain.chains import RetrievalQA
+from langchain_community.document_loaders import PyPDFLoader
 from langchain_community.vectorstores import Chroma
 from langchain_community.embeddings import SentenceTransformerEmbeddings
-from langchain.chains import RetrievalQA
-from langchain_ollama import ChatOllama
-from langchain_community.document_loaders import PyPDFLoader
 
 # Clear screen leaving just current sesion on display
 print("\033c")

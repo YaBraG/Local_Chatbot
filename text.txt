@@ -1,1 +1,3 @@
 Rene loves soft boiled eggs.
+use llama not Ollama
+ntlk natural language toolkit

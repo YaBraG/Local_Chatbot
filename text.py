@@ -17,7 +17,7 @@ llm = ChatOllama(model = "llama3",temperature=0)
 embeddings = SentenceTransformerEmbeddings(model_name="all-MiniLM-L6-v2")
 
 # Load PDF
-loader = PyPDFLoader(r"C:\Users\Owner\OneDrive\Documentos\GitHub\Local_Chatbot\ai_adoption_framework_whitepaper.pdf")
+loader = PyPDFLoader(r"C:\Users\elicona\OneDrive - Miami Dade College\Documents\GitHub\Local_Chatbot\ai_adoption_framework_whitepaper.pdf")
 docs = loader.load()
 
 # Create Chroma vector store

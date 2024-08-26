@@ -8,7 +8,7 @@ from flask import Flask
 
 app = Flask(__name__)
 
-loader = PDFMinerLoader("./University Physics with Modern Physics 15th edition.pdf")
+loader = PDFMinerLoader("./ai_adoption_framework_whitepaper.pdf")
 docs = loader.load()
 
 text_splitter = CharacterTextSplitter(

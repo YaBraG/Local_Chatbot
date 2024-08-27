@@ -1,4 +1,0 @@
-Rene loves soft boiled eggs.
-use llama not Ollama
-ntlk natural language toolkit
-https://github.com/Raul-Rivero/AI-Skyy-Project/blob/main

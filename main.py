@@ -4,6 +4,7 @@ from langchain_community.vectorstores import FAISS
 from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_text_splitters import CharacterTextSplitter
 from langchain_community.document_loaders import PDFMinerLoader
+from langchain.prompts import PromptTemplate
 from flask import Flask
 
 app = Flask(__name__)

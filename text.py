@@ -13,13 +13,13 @@ print("\033c")
 text = [10, 70, 117, 99, 107, 32, 89, 111, 117]
 
 # Initialize the Llama 3 model
-llm = ChatOllama(model = "llama3",temperature=0)
+llm = ChatOllama(model = "llama3",temperature=0.8)
 
 # Create an embedding model
 embeddings = SentenceTransformerEmbeddings(model_name="all-MiniLM-L6-v2")
 
 # Load PDF
-file_path = ("Data\\ai_adoption_framework_whitepaper.pdf")
+file_path = ("Data\\")
 loader = PyPDFLoader(
     file_path = file_path,
     extract_images = True
@@ -34,7 +34,6 @@ qa_chain = RetrievalQA.from_chain_type(
     llm=llm,
     retriever=vector_store.as_retriever(),
 )
-
 # Clear screen to only display Prompt and Response
 print("\033c")
 

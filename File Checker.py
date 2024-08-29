@@ -7,6 +7,8 @@ def get_training_files(dr,ext):
    training_files = glob(path.join(dr,"*.{}".format(ext)))
    return training_files
 
+print(get_training_files(dir_path_name,"pdf"))
+
 def killYourself():
    training_set = get_training_files(dir_path_name,"pdf")
    training_set2=[]
@@ -17,9 +19,9 @@ def killYourself():
 print ( killYourself())
 
 try:
-   previousTS = killYourself()
+   previousTS = get_training_files(dir_path_name,"pdf")
    while True:
-      currentTS = killYourself()
+      currentTS = get_training_files(dir_path_name,"pdf")
       for i in currentTS:
          if i in previousTS:
             pass

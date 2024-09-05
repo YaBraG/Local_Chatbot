@@ -17,6 +17,7 @@ llm = ChatOllama(model = "llama3",temperature=0.8)
 
 # Create an embedding model
 embeddings = SentenceTransformerEmbeddings(model_name="all-MiniLM-L6-v2")
+# try nomic 
 
 # Load PDF
 file_path = ("Data\\")

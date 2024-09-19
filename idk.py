@@ -1,49 +1,46 @@
-import fitz  # PyMuPDF
-import os
-from langchain_community.llms import Ollama
-from langchain.chains import LLMChain
-from langchain.prompts import PromptTemplate
+from langchain_ollama import ChatOllama
+from langchain.chains import RetrievalQA
+from langchain_chroma import Chroma
+from langchain_community.embeddings import SentenceTransformerEmbeddings
+print("\033c")
 
-def extract_text_from_pdfs(folder_path):
-    text_data = {}
-    for filename in os.listdir(folder_path):
-        if filename.endswith('.pdf'):
-            file_path = os.path.join(folder_path, filename)
-            pdf_document = fitz.open(file_path)
-            text = ""
-            for page_num in range(len(pdf_document)):
-                page = pdf_document.load_page(page_num)
-                text += page.get_text()
-            text_data[filename] = text
-    return text_data
+# Initialize the SentenceTransformer embeddings
+embedding_model = SentenceTransformerEmbeddings(model_name="all-MiniLM-L6-v2")
 
-def answer_question(question, pdf_folder_path):
-    pdf_texts = extract_text_from_pdfs(pdf_folder_path)
-    combined_text = "\n\n".join(pdf_texts.values())
-    
-    response = chain.run({
-        "question": question,
-        "pdf_text": combined_text
-    })
+# Initialize Chroma vector store with the embeddings
+vector_store = Chroma(embedding_model=embedding_model)
+
+# Load or add your documents into the vector store
+# For demonstration, let's say we have some sample texts
+sample_texts = [
+    "LangChain is a framework for developing applications powered by language models.",
+    "Chatbots can assist in a variety of tasks, including customer support.",
+    "Using embeddings, we can find semantically similar texts."
+]
+
+# Adding sample texts to the vector store
+for text in sample_texts:
+    vector_store.add_documents([text])
+
+# Create a RetrievalQA chain with the ChatOllama model
+chat_model = ChatOllama()
+retrieval_qa = RetrievalQA(
+    retriever=vector_store.as_retriever(),
+    llm=chat_model
+)
+
+# Function to interact with the chatbot
+def chat_with_bot(user_input):
+    response = retrieval_qa.run(user_input)
     return response
 
-# Initialize Ollama LLM
-ollama_llm = Ollama()
-
-# Define a prompt template
-prompt_template = PromptTemplate(
-    input_variables=["question", "pdf_text"],
-    template="You are a helpful assistant. Based on the provided PDF text, answer the following question: {question}\n\nPDF Text:\n{pdf_text}"
-)
-
-# Create a chain
-chain = LLMChain(
-    llm=ollama_llm,
-    prompt_template=prompt_template
-)
-
+# Main loop for chatting
 if __name__ == "__main__":
-    folder_path = r'C:\Users\elicona\OneDrive - Miami Dade College\Documents\GitHub\Local_Chatbot\Data'
-    question = input("Ask your question: ")
-    answer = answer_question(question, folder_path)
-    print("Answer:", answer)
+    print("Chatbot is ready! Type 'exit' to quit.")
+    while True:
+        user_input = input("You: ")
+        if user_input.lower() == 'exit':
+            print("Goodbye!")
+            break
+        response = chat_with_bot(user_input)
+        print(f"Bot: {response}")

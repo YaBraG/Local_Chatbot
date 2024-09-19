@@ -2,9 +2,9 @@ from os import path
 from glob import glob
 from langchain_ollama import ChatOllama
 from langchain.chains import RetrievalQA
-from langchain_community.document_loaders import PyPDFLoader
 from langchain_community.vectorstores import Chroma
 from langchain_community.embeddings import SentenceTransformerEmbeddings
+from langchain_community.document_loaders import PyPDFLoader
 
 # Clear screen leaving just current sesion on display
 print("\033c")

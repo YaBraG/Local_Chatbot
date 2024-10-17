@@ -10,7 +10,7 @@ from langchain_community.document_loaders import PyPDFLoader
 print("\033c")
 
 # Cause I want to
-text = [10, 70, 117, 99, 107, 32, 89, 111, 117]
+# text = [10, 70, 117, 99, 107, 32, 89, 111, 117]
 
 # Initialize the Llama 3 model
 llm = ChatOllama(model = "llama3",temperature=0.8)
@@ -20,7 +20,7 @@ embeddings = SentenceTransformerEmbeddings(model_name="all-MiniLM-L6-v2")
 # try nomic 
 
 # Load PDF
-file_path = ("Data\\")
+file_path = ("Data")
 loader = PyPDFLoader(
     file_path = file_path,
     extract_images = True
@@ -49,6 +49,7 @@ try:
 # Error handling for when user force stop
 except KeyboardInterrupt:
     # Cause I want to
-    print ("".join([chr(item) for item in text]))
+    # print ("".join([chr(item) for item in text]))
+    print("Safe Exit")
     
 # Chatbot doesn't recognize previous response, meaning that there is no record of conversation happening. -Look into it

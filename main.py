@@ -7,9 +7,9 @@ from langchain.prompts import PromptTemplate
 from langchain_community.document_loaders import PDFMinerLoader
 from flask import Flask
 
-app = Flask(__name__)
+# app = Flask(__name__)
 
-loader = PDFMinerLoader("./ai_adoption_framework_whitepaper.pdf")
+loader = PDFMinerLoader("./Data/2023 MBF Author Tool Kit.pdf")
 docs = loader.load()
 
 text_splitter = CharacterTextSplitter(
@@ -30,12 +30,15 @@ chain = RetrievalQA.from_chain_type(
     retriever=db.as_retriever()
 )
 
-question = "Can you please summarize page 100 and answer the first question that appears"
-result = chain.invoke({"query": question})
+while 1:
+        # Input question and pass to llm
+        question = input("Enter Prompt (CTRL + C to stop): ")
+        result = chain.invoke({"query": question})
+        print(f"Response : {result['result']}\n")
+        
+# @app.route('/')
+# def index():
+#     return result['result']
 
-@app.route('/')
-def index():
-    return result['result']
-
-if __name__ == "__main__":
-    app.run(debug=True)
+# if __name__ == "__main__":
+#     app.run(debug=True)

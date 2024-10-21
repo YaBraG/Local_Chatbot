@@ -1,0 +1,5 @@
+faiss-cpu
+huggingface_hub
+pdfminer.six
+langchain
+langchain_community

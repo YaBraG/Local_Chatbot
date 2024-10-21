@@ -4,7 +4,7 @@ from langchain_community.document_loaders import PyPDFLoader
 
 dir_path_name = "Data"
 
-# Clear screen leaving just current sesion on display
+# Clear screen leaving just current session on display
 print("\033c")
 
 def get_training_files(dr,ext):

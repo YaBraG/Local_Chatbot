@@ -6,7 +6,7 @@ from langchain_community.vectorstores import Chroma
 from langchain_community.embeddings import SentenceTransformerEmbeddings
 from langchain_community.document_loaders import PyPDFLoader
 
-# Clear screen leaving just current sesion on display
+# Clear screen leaving just current session on display
 print("\033c")
 
 # Cause I want to
@@ -38,7 +38,7 @@ qa_chain = RetrievalQA.from_chain_type(
 # Clear screen to only display Prompt and Response
 print("\033c")
 
-# Program will keep runing until user force stop
+# Program will keep running until user force stop
 try:
     while 1:
         # Input question and pass to llm

@@ -1,5 +1,8 @@
 faiss-cpu
 huggingface_hub
 pdfminer.six
+fitz
+pytesseract
+pdf2image
 langchain
 langchain_community

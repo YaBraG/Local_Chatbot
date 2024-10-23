@@ -1,6 +1,69 @@
 import subprocess
 import os
 import sys
+import platform
+
+def add_python_to_path():
+    # Get the current Python executable's path
+    python_path = sys.executable
+    python_dir = os.path.dirname(python_path)
+
+    # Check the operating system
+    current_os = platform.system()
+
+    if current_os == 'Windows':
+        # Add Python and Scripts directories to PATH for Windows
+        new_path = f"{python_dir};{python_dir}\\Scripts"
+
+        # Update PATH for the current session
+        os.environ['PATH'] = new_path + ';' + os.environ['PATH']
+
+        # Update PATH permanently using setx
+        subprocess.run(['setx', 'PATH', os.environ['PATH']])
+
+        print("Python has been added to the PATH for Windows.")
+    
+    elif current_os in ['Linux', 'Darwin']:  # Darwin is for macOS
+        # Add Python and bin directories to PATH for Linux/macOS
+        new_path = f"{python_dir}:{python_dir}/bin"
+
+        # Update PATH for the current session
+        os.environ['PATH'] = new_path + ':' + os.environ['PATH']
+
+        # Provide instructions to add the path permanently
+        shell_profile = os.path.expanduser("~/.bashrc" if current_os == 'Linux' else "~/.zshrc")
+        
+        with open(shell_profile, 'a') as file:
+            file.write(f'\n# Added by Python script\nexport PATH="{new_path}:$PATH"\n')
+
+        print(f"Python has been added to the PATH for {current_os}.")
+        print(f"To make the changes permanent, restart your terminal or run:\nsource {shell_profile}")
+    
+    else:
+        print(f"Unsupported OS: {current_os}. Cannot modify PATH.")
+
+# Run the function
+add_python_to_path()
+
+def add_directory_to_path2(directory):
+    # Add the directory to the current session's PATH
+    os.environ['PATH'] = directory + ';' + os.environ['PATH']
+
+    # Permanently add the directory to the PATH for Windows
+    subprocess.run(['setx', 'PATH', os.environ['PATH']])
+
+def same():
+    # The directory from the warning
+    scripts_dir = r'C:\Users\elicona\AppData\Roaming\Python\Python311\Scripts'
+
+    # Check if the directory is already in PATH
+    if scripts_dir not in os.environ['PATH']:
+        add_directory_to_path2(scripts_dir)
+        print(f"The directory '{scripts_dir}' has been added to PATH.")
+    else:
+        print(f"The directory '{scripts_dir}' is already in PATH.")
+
+same()
 
 # Exit if requirements.txt is missing
 if not os.path.exists("requirements.txt"):

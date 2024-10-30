@@ -1,45 +1,51 @@
-from os import path
-from glob import glob
-from langchain_community.document_loaders import PyPDFLoader
+import os
+from langchain.chains import RetrievalQA
+from langchain_community.llms import Ollama
+from langchain_community.vectorstores import FAISS
+from langchain_huggingface import HuggingFaceEmbeddings
+from langchain_text_splitters import CharacterTextSplitter
+from langchain_community.document_loaders import PDFMinerLoader
 
-dir_path_name = "Data"
-
-# Clear screen leaving just current session on display
+# Clear screen to only display Prompt and Response
 print("\033c")
 
-def get_training_files(dr,ext):
-   training_files = glob(path.join(dr,"*.{}".format(ext)))
-   training_set=[]
-   for i in training_files:
-      training_set.append(i.replace(f'{dir_path_name}\\',''))
-   return training_set
+# Path to the folder containing PDF files
+pdf_folder_path = "./Data"
 
-# Load PDF
-def get_pdf(dr):
-    file_path= (f"Data\\{dr}")
-    loader = PyPDFLoader(
-        file_path = file_path,
-        extract_images = True
-        )
-    return loader.load()
+# Get a list of all PDF files in the folder
+pdf_files = [f for f in os.listdir(pdf_folder_path) if f.endswith(".pdf")]
 
-try:
-    docs = []
-    ts = get_training_files(dir_path_name,"pdf")
-    previousTS = ts
-    for i in ts:
-        docs.append(get_pdf(i))
-        print(docs)
-    while True:
-        currentTS = get_training_files(dir_path_name,"pdf")
-        for i in currentTS:
-            if i in previousTS:
-                pass
-            else:
-                newPDF = i
-                print(newPDF)
-                docs.append(get_pdf(newPDF))
-        previousTS = currentTS
-  
-except KeyboardInterrupt:
-   print("Me fui")
+# Load all PDFs in the folder
+docs = []
+for pdf_file in pdf_files:
+    loader = PDFMinerLoader(os.path.join(pdf_folder_path, pdf_file))
+    docs.extend(loader.load())  # Load and add documents to the list
+
+# Split documents into chunks
+text_splitter = CharacterTextSplitter(
+    separator="\n",
+    chunk_size=2000,
+    chunk_overlap=200
+)
+texts = text_splitter.split_documents(docs)
+
+# Initialize embeddings and FAISS index
+embeddings = HuggingFaceEmbeddings()
+db = FAISS.from_documents(texts, embeddings)
+
+# Set up the LLM (Ollama in this case) and the RetrievalQA chain
+llm = Ollama(model="llama3")
+chain = RetrievalQA.from_chain_type(
+    llm,
+    retriever=db.as_retriever()
+)
+
+# Clear screen to only display Prompt and Response
+print("\033c")
+
+# Infinite loop for prompt and response
+while True:
+    # Input question and pass to the LLM
+    question = input("Enter Prompt (CTRL + C to stop): ")
+    result = chain.invoke({"query": question})
+    print(f"Response : {result['result']}\n")

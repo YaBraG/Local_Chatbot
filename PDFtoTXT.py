@@ -17,5 +17,5 @@ def extract_plain_text_with_fitz(pdf_path):
 # Usage
 pdf_path = "./Data/1-110-ONLINE_VS09.pdf"
 text = extract_plain_text_with_fitz(pdf_path)
-with open("output_plain_fitz.txt", "w", encoding="utf-8") as file:
+with open("output.txt", "w", encoding="utf-8") as file:
     file.write(text)

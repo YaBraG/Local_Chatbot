@@ -52,19 +52,6 @@ def add_directory_to_path2(directory):
     # Permanently add the directory to the PATH for Windows
     subprocess.run(['setx', 'PATH', os.environ['PATH']])
 
-def same():
-    # The directory from the warning
-    scripts_dir = r'C:\Users\elicona\AppData\Roaming\Python\Python311\Scripts'
-
-    # Check if the directory is already in PATH
-    if scripts_dir not in os.environ['PATH']:
-        add_directory_to_path2(scripts_dir)
-        print(f"The directory '{scripts_dir}' has been added to PATH.")
-    else:
-        print(f"The directory '{scripts_dir}' is already in PATH.")
-
-same()
-
 # Exit if requirements.txt is missing
 if not os.path.exists("requirements.txt"):
     print("requirements.txt not found, exiting.")

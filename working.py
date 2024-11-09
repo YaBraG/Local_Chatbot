@@ -2,6 +2,8 @@ import os
 import sys
 import platform
 import subprocess
+import time
+from PDFtoTXT import convert_all_pdfs_in_folder  # Import the PDF-to-TXT conversion function
 
 def add_directory_to_path(directory):
     if directory not in os.environ['PATH']:
@@ -43,15 +45,20 @@ def install_requirements():
 def clear_screen():
     os.system('cls' if platform.system() == 'Windows' else 'clear')
 
-def load_and_split_documents(txt_folder_path):
-    from langchain.text_splitters import CharacterTextSplitter
+from langchain.text_splitter import CharacterTextSplitter
 
+class Document:
+    def __init__(self, content, metadata=None):
+        self.page_content = content  # Store content in 'page_content' attribute
+        self.metadata = metadata or {}  # Add an empty dictionary for 'metadata'
+
+def load_and_split_documents(txt_folder_path):
     txt_files = [f for f in os.listdir(txt_folder_path) if f.endswith(".txt")]
     docs = []
     for txt_file in txt_files:
         with open(os.path.join(txt_folder_path, txt_file), 'r', encoding='utf-8') as file:
             content = file.read()
-            docs.append(content)
+            docs.append(Document(content))  # Wrap content in Document with metadata
 
     text_splitter = CharacterTextSplitter(separator="\n", chunk_size=2000, chunk_overlap=200)
     return text_splitter.split_documents(docs)
@@ -71,27 +78,59 @@ def setup_llm_retrieval():
 
 def interactive_chat(chain):
     chat_history = []
+    
+    # Add a system prompt to guide the LLM
+    system_prompt = (
+        "You are an informative chatbot dedicated to providing detailed information "
+        "to the authors participating in the Miami Book Fair. Answer questions "
+        "accurately, focusing on the authors' biographies, books, genres, achievements, "
+        "and scheduled events or sessions. Be concise yet comprehensive in your responses."
+        "Avoid sounding like you are guessing. You are an assistant that accurately answers"
+        "to authors questions."
+    )
+    chat_history.append(f"System: {system_prompt}")
 
     while True:
         try:
             question = input("Enter Prompt (CTRL + C to stop): ")
             chat_history.append(f"User: {question}")
 
-            result = chain.invoke({"query": question, "chat_history": "\n".join(chat_history)})
+            result = chain.invoke({
+                "query": question,
+                "chat_history": "\n".join(chat_history),
+                "system_message": system_prompt  # Pass the prompt directly here
+            })
             chat_history.append(f"Bot: {result['result']}")
 
-            print(f"Response: {result['result']}\n")
+            # Print the response, stripping any unwanted phrases
+            response = result['result'].replace("Based on the provided context, ", "")
+            print(f"Response: {response}\n")
+
         except KeyboardInterrupt:
             print("\nExiting chat...")
             break
 
 def main():
+    # Start time measurement for performance tracking
+    start = time.process_time()
+    
+    # Convert PDFs to TXT files
+    convert_all_pdfs_in_folder("./Data")  # Run PDF-to-TXT conversion on all PDFs in the folder
+
+    # Setup environment and install dependencies
     setup_environment()
     install_requirements()
 
+    # Clear screen before starting
     clear_screen()
 
+    # Set up the LLM and retrieval chain
     chain = setup_llm_retrieval()
+    
+    # Print processing time
+    print("Processing time:", time.process_time() - start)
+    
+    # Start the interactive chat
     interactive_chat(chain)
 
 if __name__ == "__main__":

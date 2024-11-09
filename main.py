@@ -2,6 +2,7 @@ import os
 import sys
 import platform
 import subprocess
+import time
 
 def add_directory_to_path(directory):
     # Add the directory to the current session's PATH
@@ -98,17 +99,14 @@ def interactive_chat(chain):
             break
 
 def main():
-    # Setup environment and install dependencies
+    start = time.process_time()
     setup_environment()
     install_requirements()
 
-    # Clear screen before starting
     clear_screen()
 
-    # Set up the LLM and retrieval chain
     chain = setup_llm_retrieval()
-
-    # Start the interactive chat
+    print(time.process_time() - start)
     interactive_chat(chain)
 
 if __name__ == "__main__":

@@ -7,4 +7,3 @@ pdf2image
 langchain
 langchain_community
 langchain_huggingface
-langchain.text_splitters

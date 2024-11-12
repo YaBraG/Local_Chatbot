@@ -7,7 +7,9 @@ import fitz  # PyMuPDF
 
 data_path = "./Data"
 combined_txt_file = "combined_text.txt"
-converted_log_file = "converted_pdfs.txt"
+
+# Specify the directory path where `ollama` is installed
+ollama_dir = r"C:\path\to\ollama"  # Update this with the actual path
 
 # Function to add directory to PATH
 def add_directory_to_path(directory):
@@ -28,9 +30,11 @@ def setup_environment():
     if current_os == 'Windows':
         add_directory_to_path(python_dir)
         add_directory_to_path(os.path.join(python_dir, 'Scripts'))
+        add_directory_to_path(ollama_dir)  # Add ollama to PATH
     elif current_os in ['Linux', 'Darwin']:
         add_directory_to_path(python_dir)
         add_directory_to_path(os.path.join(python_dir, 'bin'))
+        add_directory_to_path(ollama_dir)  # Add ollama to PATH
 
 # Install requirements if not already installed
 def install_requirements():
@@ -66,37 +70,22 @@ def convert_pdf_to_txt(pdf_path, output_folder):
         file.write(text)
     return os.path.basename(pdf_path)  # Return the name of the converted PDF
 
-def convert_new_pdfs(pdf_folder, output_folder):
-    if os.path.exists(converted_log_file):
-        with open(converted_log_file, "r") as file:
-            converted_pdfs = set(file.read().splitlines())
-    else:
-        converted_pdfs = set()
-
+def convert_pdfs_in_folder(pdf_folder, output_folder):
     pdf_files = [f for f in os.listdir(pdf_folder) if f.endswith(".pdf")]
-    newly_converted = []
-
     for pdf_file in pdf_files:
         pdf_path = os.path.join(pdf_folder, pdf_file)
-        if pdf_file not in converted_pdfs:
-            print(f"Converting {pdf_file}...")
-            convert_pdf_to_txt(pdf_path, output_folder)
-            newly_converted.append(pdf_file)
-
-    # Update converted log only if new files were converted
-    if newly_converted:
-        with open(converted_log_file, "a") as log_file:
-            log_file.write("\n".join(newly_converted) + "\n")
+        print(f"Converting {pdf_file}...")
+        convert_pdf_to_txt(pdf_path, output_folder)
 
 def combine_txt_files(txt_folder_path, output_file):
-    txt_files = [f for f in os.listdir(txt_folder_path) if f.endswith(".txt")]
+    txt_files = [f for f in os.listdir(txt_folder_path) if f.endswith(".txt") and f != combined_txt_file]
 
     with open(output_file, "w", encoding="utf-8") as outfile:
         for txt_file in txt_files:
             with open(os.path.join(txt_folder_path, txt_file), "r", encoding="utf-8") as infile:
                 outfile.write(infile.read() + "\n")
 
-    # Remove individual txt files after combining
+    # Remove individual txt files after combining, excluding the combined_txt_file
     for txt_file in txt_files:
         os.remove(os.path.join(txt_folder_path, txt_file))
 
@@ -114,7 +103,7 @@ def load_and_split_documents(combined_file_path):
 
     docs = [Document(content)]
     text_splitter = CharacterTextSplitter(separator="\n", chunk_size=1000, chunk_overlap=200)
-    return text_splitter.split_documents(docs) # type: ignore
+    return text_splitter.split_documents(docs)  # type: ignore
 
 def setup_llm_retrieval():
     from langchain_community.llms import Ollama
@@ -124,15 +113,16 @@ def setup_llm_retrieval():
 
     embeddings = HuggingFaceEmbeddings()
 
-    # Convert any new PDFs and combine all txt files into one
-    convert_new_pdfs(data_path, data_path)
+    # Convert PDFs in the folder and combine all txt files into one
+    convert_pdfs_in_folder(data_path, data_path)
     combine_txt_files(data_path, os.path.join(data_path, combined_txt_file))
 
     # Load and split documents from the combined text file
     docs = load_and_split_documents(os.path.join(data_path, combined_txt_file))
     db = FAISS.from_documents(docs, embeddings)
 
-    llm = Ollama(model="llama3.2")
+    # Pull the model using Ollama
+    llm = Ollama(model="llama3")
     return RetrievalQA.from_chain_type(llm, retriever=db.as_retriever())
 
 # Chat Interface with System Prompt
@@ -141,11 +131,11 @@ def interactive_chat(chain):
 
     # Define system prompt for guiding the LLM
     system_prompt = (
+        "You are not allowed to say that you are referring to the context."
         "You are an informative chatbot dedicated to providing detailed information "
         "about the authors participating in the Miami Book Fair. Answer questions "
         "accurately, focusing on the authors' biographies, books, genres, achievements, "
         "and scheduled events or sessions. Be concise yet comprehensive in your responses."
-        "Your are not allow to say that you are referring to the context."
     )
     chat_history.append(f"System: {system_prompt}")
 
@@ -177,12 +167,12 @@ def main():
     setup_environment()
     install_requirements()
 
-    # Clear screen before starting
-    clear_screen()
-
     # Set up the LLM and retrieval chain
     chain = setup_llm_retrieval()
 
+    # Clear screen before starting
+    clear_screen()
+    
     # Print processing time
     print("Processing time:", time.process_time() - start)
 

@@ -132,7 +132,7 @@ def setup_llm_retrieval():
     docs = load_and_split_documents(os.path.join(data_path, combined_txt_file))
     db = FAISS.from_documents(docs, embeddings)
 
-    llm = Ollama(model="llama3")
+    llm = Ollama(model="llama3.2")
     return RetrievalQA.from_chain_type(llm, retriever=db.as_retriever())
 
 # Chat Interface with System Prompt
@@ -145,6 +145,7 @@ def interactive_chat(chain):
         "about the authors participating in the Miami Book Fair. Answer questions "
         "accurately, focusing on the authors' biographies, books, genres, achievements, "
         "and scheduled events or sessions. Be concise yet comprehensive in your responses."
+        "Your are not allow to say that you are referring to the context."
     )
     chat_history.append(f"System: {system_prompt}")
 

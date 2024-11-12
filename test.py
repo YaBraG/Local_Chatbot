@@ -55,7 +55,7 @@ def extract_plain_text_with_fitz(pdf_path):
     full_text = ""
     for page_num in range(len(pdf_document)):
         page = pdf_document.load_page(page_num)
-        text = page.get_text("text")
+        text = page.get_text("text") # type: ignore
         full_text += text
     pdf_document.close()
     return full_text

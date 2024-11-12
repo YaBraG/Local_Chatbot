@@ -113,8 +113,8 @@ def load_and_split_documents(combined_file_path):
         content = file.read()
 
     docs = [Document(content)]
-    text_splitter = CharacterTextSplitter(separator="\n", chunk_size=1500, chunk_overlap=200)
-    return text_splitter.split_documents(docs)
+    text_splitter = CharacterTextSplitter(separator="\n", chunk_size=1000, chunk_overlap=200)
+    return text_splitter.split_documents(docs) # type: ignore
 
 def setup_llm_retrieval():
     from langchain_community.llms import Ollama

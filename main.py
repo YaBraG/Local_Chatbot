@@ -6,6 +6,8 @@ import time
 import fitz  # PyMuPDF
 
 data_path = "./Data"
+combined_txt_file = "combined_text.txt"
+converted_log_file = "converted_pdfs.txt"
 
 # Function to add directory to PATH
 def add_directory_to_path(directory):
@@ -30,21 +32,16 @@ def setup_environment():
         add_directory_to_path(python_dir)
         add_directory_to_path(os.path.join(python_dir, 'bin'))
 
-        shell_profile = os.path.expanduser("~/.bashrc" if current_os == 'Linux' else "~/.zshrc")
-        with open(shell_profile, 'a') as file:
-            file.write(f'\n# Added by Python script\nexport PATH="{python_dir}:${{PATH}}"\n')
-        print(f"To make changes permanent, run: source {shell_profile}")
-
-# Install requirements based on a setup.py file
+# Install requirements if not already installed
 def install_requirements():
-    if not os.path.exists("requirements.txt"):
+    if os.path.exists("requirements.txt"):
+        try:
+            subprocess.check_call([sys.executable, "-m", "pip", "install", "-r", "requirements.txt"])
+        except subprocess.CalledProcessError as e:
+            print(f"Error installing dependencies: {e}")
+            sys.exit(1)
+    else:
         print("requirements.txt not found, exiting.")
-        sys.exit(1)
-
-    try:
-        subprocess.check_call([sys.executable, "setup.py"])
-    except subprocess.CalledProcessError as e:
-        print(f"Error running setup.py: {e}")
         sys.exit(1)
 
 # Clear screen for a clean output
@@ -57,7 +54,7 @@ def extract_plain_text_with_fitz(pdf_path):
     full_text = ""
     for page_num in range(len(pdf_document)):
         page = pdf_document.load_page(page_num)
-        text = page.get_text("text") # type: ignore
+        text = page.get_text("text")  # type: ignore
         full_text += text
     pdf_document.close()
     return full_text
@@ -69,7 +66,7 @@ def convert_pdf_to_txt(pdf_path, output_folder):
         file.write(text)
     return os.path.basename(pdf_path)  # Return the name of the converted PDF
 
-def convert_all_pdfs_in_folder(pdf_folder, output_folder, converted_log_file="converted_pdfs.txt"):
+def convert_new_pdfs(pdf_folder, output_folder):
     if os.path.exists(converted_log_file):
         with open(converted_log_file, "r") as file:
             converted_pdfs = set(file.read().splitlines())
@@ -80,13 +77,28 @@ def convert_all_pdfs_in_folder(pdf_folder, output_folder, converted_log_file="co
     newly_converted = []
 
     for pdf_file in pdf_files:
+        pdf_path = os.path.join(pdf_folder, pdf_file)
         if pdf_file not in converted_pdfs:
-            pdf_path = os.path.join(pdf_folder, pdf_file)
             print(f"Converting {pdf_file}...")
             convert_pdf_to_txt(pdf_path, output_folder)
             newly_converted.append(pdf_file)
-            with open(converted_log_file, "a") as log_file:
-                log_file.write(pdf_file + "\n")
+
+    # Update converted log only if new files were converted
+    if newly_converted:
+        with open(converted_log_file, "a") as log_file:
+            log_file.write("\n".join(newly_converted) + "\n")
+
+def combine_txt_files(txt_folder_path, output_file):
+    txt_files = [f for f in os.listdir(txt_folder_path) if f.endswith(".txt")]
+
+    with open(output_file, "w", encoding="utf-8") as outfile:
+        for txt_file in txt_files:
+            with open(os.path.join(txt_folder_path, txt_file), "r", encoding="utf-8") as infile:
+                outfile.write(infile.read() + "\n")
+
+    # Remove individual txt files after combining
+    for txt_file in txt_files:
+        os.remove(os.path.join(txt_folder_path, txt_file))
 
 # Chatbot System Prompt Integration
 from langchain.text_splitter import CharacterTextSplitter
@@ -96,15 +108,12 @@ class Document:
         self.page_content = content
         self.metadata = metadata or {}
 
-def load_and_split_documents(txt_folder_path):
-    txt_files = [f for f in os.listdir(txt_folder_path) if f.endswith(".txt")]
-    docs = []
-    for txt_file in txt_files:
-        with open(os.path.join(txt_folder_path, txt_file), 'r', encoding='utf-8') as file:
-            content = file.read()
-            docs.append(Document(content))
+def load_and_split_documents(combined_file_path):
+    with open(combined_file_path, "r", encoding="utf-8") as file:
+        content = file.read()
 
-    text_splitter = CharacterTextSplitter(separator="\n", chunk_size=2000, chunk_overlap=200)
+    docs = [Document(content)]
+    text_splitter = CharacterTextSplitter(separator="\n", chunk_size=1500, chunk_overlap=200)
     return text_splitter.split_documents(docs)
 
 def setup_llm_retrieval():
@@ -114,7 +123,13 @@ def setup_llm_retrieval():
     from langchain.chains import RetrievalQA
 
     embeddings = HuggingFaceEmbeddings()
-    docs = load_and_split_documents(data_path)
+
+    # Convert any new PDFs and combine all txt files into one
+    convert_new_pdfs(data_path, data_path)
+    combine_txt_files(data_path, os.path.join(data_path, combined_txt_file))
+
+    # Load and split documents from the combined text file
+    docs = load_and_split_documents(os.path.join(data_path, combined_txt_file))
     db = FAISS.from_documents(docs, embeddings)
 
     llm = Ollama(model="llama3")
@@ -129,28 +144,25 @@ def interactive_chat(chain):
         "You are an informative chatbot dedicated to providing detailed information "
         "about the authors participating in the Miami Book Fair. Answer questions "
         "accurately, focusing on the authors' biographies, books, genres, achievements, "
-        "and scheduled events or sessions. Avoid prefacing responses with phrases like "
-        "'Based on the provided context.' Be concise yet comprehensive in your responses."
+        "and scheduled events or sessions. Be concise yet comprehensive in your responses."
     )
     chat_history.append(f"System: {system_prompt}")
 
     while True:
         try:
-            # Convert PDFs to TXT files if necessary
-            convert_all_pdfs_in_folder(data_path, data_path)
             question = input("Enter Prompt (CTRL + C to stop): ")
             chat_history.append(f"User: {question}")
 
             # Pass the system prompt alongside the user query and chat history to the chain
             result = chain.invoke({
                 "query": question,
-                "chat_history": "\n".join(chat_history),
+                "chat_history": "\n".join(chat_history[-5:]),  # Keep only the last 5 interactions
                 "system_message": system_prompt  # Pass the prompt directly here
             })
             chat_history.append(f"Bot: {result['result']}")
 
-            # Print the response, stripping any unwanted phrases
-            response = result['result'].replace("Based on the provided context, ", "")
+            # Print the response
+            response = result['result']
             print(f"Response: {response}\n")
         except KeyboardInterrupt:
             print("\nExiting chat...")
@@ -160,10 +172,7 @@ def interactive_chat(chain):
 def main():
     start = time.process_time()
 
-    # Convert PDFs to TXT files if necessary
-    convert_all_pdfs_in_folder(data_path, data_path)
-
-    # Setup environment and install dependencies
+    # Setup environment and install dependencies if not installed
     setup_environment()
     install_requirements()
 

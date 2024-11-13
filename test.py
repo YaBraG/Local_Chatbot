@@ -94,7 +94,7 @@ def load_and_split_documents(combined_file_path):
     with open(combined_file_path, "r", encoding="utf-8") as file:
         content = file.read()
     docs = [Document(content)]
-    text_splitter = CharacterTextSplitter(separator="\n", chunk_size=5000000, chunk_overlap=200)
+    text_splitter = CharacterTextSplitter(separator="\n", chunk_size=1000, chunk_overlap=200)
     return text_splitter.split_documents(docs) # type: ignore
 
 # Setup LangChain with FAISS and LLM (Ollama)

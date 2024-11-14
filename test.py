@@ -2,13 +2,6 @@ import os
 import sys
 import platform
 import subprocess
-import fitz  # PyMuPDF
-import torch
-from langchain.text_splitter import CharacterTextSplitter
-from langchain_community.llms import Ollama
-from langchain_community.vectorstores import FAISS
-from langchain_huggingface import HuggingFaceEmbeddings
-from langchain.chains import RetrievalQA
 
 # Paths for data and the combined text file
 data_path = "./Data"
@@ -42,6 +35,19 @@ def install_requirements():
         print("requirements.txt not found.")
         sys.exit(1)
 
+# Setup environment and install requirements if needed
+setup_environment() 
+
+# Set up the LLM and retrieval chain
+install_requirements()  
+
+import fitz  # PyMuPDF
+import torch
+from langchain.text_splitter import CharacterTextSplitter
+from langchain_community.llms import Ollama
+from langchain_community.vectorstores import FAISS
+from langchain_huggingface import HuggingFaceEmbeddings
+from langchain.chains import RetrievalQA
 # PDF-to-TXT conversion using PyMuPDF
 def extract_plain_text_with_fitz(pdf_path):
     """ Extracts plain text from a PDF file using PyMuPDF. """
@@ -151,11 +157,7 @@ def interactive_chat(chain, prompt):
         return "Exiting chat..."
             # break
 
-# Setup environment and install requirements if needed
-setup_environment() 
-
-# Set up the LLM and retrieval chain
-install_requirements()   
+ 
 
 # Start the interactive chat
 chain = setup_llm_retrieval()

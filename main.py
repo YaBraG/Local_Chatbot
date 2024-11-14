@@ -102,7 +102,7 @@ def load_and_split_documents(combined_file_path):
         content = file.read()
 
     docs = [Document(content)]
-    text_splitter = CharacterTextSplitter(separator="\n", chunk_size=1000, chunk_overlap=200)
+    text_splitter = CharacterTextSplitter(separator="\n", chunk_size=1000000, chunk_overlap=200)
     return text_splitter.split_documents(docs)  # type: ignore
 
 def setup_llm_retrieval():
@@ -164,8 +164,8 @@ def main():
     start = time.process_time()
 
     # Setup environment and install dependencies if not installed
-    setup_environment()
-    install_requirements()
+    # setup_environment()
+    # install_requirements()
 
     # Set up the LLM and retrieval chain
     chain = setup_llm_retrieval()

@@ -16,7 +16,7 @@ def process_text():
 
 if __name__ == "__main__":
     # Get the port number from the environment variable or default to 5000
-    port = int(os.environ.get("PORT", 5000))
+    port = int(os.environ.get("PORT", 2375))
 
     # Print the port number
     print(f"Running on port {port}")

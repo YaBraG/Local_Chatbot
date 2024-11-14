@@ -125,47 +125,46 @@ def setup_llm_retrieval():
     return RetrievalQA.from_chain_type(llm, retriever=db.as_retriever())
 
 # Chat Interface to interact with the system
-def interactive_chat(chain):
-    """ Interactive chat loop to answer user questions. """
-    chat_history = []
+def interactive_chat(chain, prompt):
+    # """ Interactive chat loop to answer user questions. """
+    # chat_history = []
     system_prompt = (
         "You are an informative chatbot dedicated to providing detailed information "
         "about the authors participating in the Miami Book Fair. Answer questions "
         "accurately and concisely."
     )
-    chat_history.append(f"System: {system_prompt}")
+    # chat_history.append(f"System: {system_prompt}")
 
-    while True:
-        try:
-            question = input("Enter Prompt (CTRL + C to stop): ")
-            chat_history.append(f"User: {question}")
-            result = chain.invoke({
-                "query": question,
-                "chat_history": "\n".join(chat_history[-5:]),
-                "system_message": system_prompt
-            })
-            chat_history.append(f"Bot: {result['result']}")
-            print(f"Response: {result['result']}\n")
-        except KeyboardInterrupt:
-            print("\nExiting chat...")
-            break
+    # while True:
+    try:
+        # chat_history.append(f"User: {question}")
+        result = chain.invoke({
+            "query": prompt,
+            # "chat_history": "\n".join(chat_history[-5:]),
+            "system_message": system_prompt
+        })
+        # chat_history.append(f"Bot: {result['result']}")
+        response = result['result']
+        print(f"INSIDE LIB RESPONCE: {response}\n")
+        
+        return response
+    except KeyboardInterrupt:
+        return "Exiting chat..."
+            # break
 
-# Main function to start the execution
-def main():
-    """ Main entry point of the program. """
-    start = time.process_time()
+# Setup environment and install requirements if needed
+setup_environment() 
 
-    # Setup environment and install requirements if needed
-    setup_environment()
-    install_requirements()
+# Set up the LLM and retrieval chain
+install_requirements()   
 
-    # Set up the LLM and retrieval chain
-    chain = setup_llm_retrieval()
+# Start the interactive chat
+chain = setup_llm_retrieval()
 
-    print("Processing time:", time.process_time() - start)
-    
-    # Start the interactive chat
-    interactive_chat(chain)
+print("LLM INITIALIZED...")
 
-if __name__ == "__main__":
-    main()
+# # Main function to start the execution
+def ask_llm(prompt):
+    return interactive_chat(chain, prompt)
+
+

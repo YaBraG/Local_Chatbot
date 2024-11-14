@@ -2,7 +2,6 @@ import os
 import sys
 import platform
 import subprocess
-import time
 import fitz  # PyMuPDF
 import torch
 from langchain.text_splitter import CharacterTextSplitter
@@ -32,13 +31,13 @@ def add_directory_to_path(directory):
     """ Adds a directory to the system PATH if not already present. """
     if directory not in os.environ['PATH']:
         os.environ['PATH'] = directory + os.pathsep + os.environ['PATH']
-        print(f"Added '{directory}' to PATH.")
+        # print(f"Added '{directory}' to PATH.")
 
 # Install requirements if not already installed
 def install_requirements():
     """ Installs dependencies from requirements.txt. """
     if os.path.exists("requirements.txt"):
-        subprocess.check_call([sys.executable, "-m", "pip", "install", "-r", "requirements.txt"])
+        subprocess.check_call([sys.executable, "-m", "pip3", "install", "-r", "requirements.txt"])
     else:
         print("requirements.txt not found.")
         sys.exit(1)
@@ -67,7 +66,7 @@ def convert_pdfs_in_folder(pdf_folder, output_folder):
     pdf_files = [f for f in os.listdir(pdf_folder) if f.endswith(".pdf")]
     for pdf_file in pdf_files:
         pdf_path = os.path.join(pdf_folder, pdf_file)
-        print(f"Converting {pdf_file}...")
+        # print(f"Converting {pdf_file}...")
         convert_pdf_to_txt(pdf_path, output_folder)
 
 def combine_txt_files(txt_folder_path, output_file):
@@ -145,7 +144,7 @@ def interactive_chat(chain, prompt):
         })
         # chat_history.append(f"Bot: {result['result']}")
         response = result['result']
-        print(f"INSIDE LIB RESPONCE: {response}\n")
+        # print(f"INSIDE LIB RESPONCE: {response}\n")
         
         return response
     except KeyboardInterrupt:

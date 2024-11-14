@@ -1,9 +1,11 @@
-faiss-cpu
+faiss-gpu
 huggingface_hub
 pdfminer.six
 fitz
+flask
 pytesseract
 pdf2image
 langchain
 langchain_community
 langchain_huggingface
+torch

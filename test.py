@@ -37,11 +37,11 @@ def install_requirements():
         print("requirements.txt not found.")
         sys.exit(1)
 
-# Setup environment and install requirements if needed
-setup_environment() 
+# # Setup environment and install requirements if needed
+# setup_environment() 
 
-# Set up the LLM and retrieval chain
-install_requirements()  
+# # Set up the LLM and retrieval chain
+# install_requirements()  
 
 import fitz  # PyMuPDF
 import torch

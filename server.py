@@ -4,16 +4,6 @@ from flask import Flask, request, jsonify
 
 app = Flask(__name__)
 
-# Middleware to process requests before reaching the endpoint
-
-response = ""
-
-@app.before_request
-def before_request_func():
-    print("Middleware: Processing request")
-    
-    
-    
 # Endpoint to handle incoming text
 @app.route('/process_text', methods=['POST'])
 def process_text():

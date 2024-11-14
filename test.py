@@ -14,9 +14,11 @@ def setup_environment():
 
     # Add necessary directories to PATH for Windows or Linux/macOS
     if current_os == 'Windows':
+        print("I AM IN THE WINDOWS ENV")
         add_directory_to_path(python_dir)
         add_directory_to_path(os.path.join(python_dir, 'Scripts'))
     elif current_os in ['Linux', 'Darwin']:
+        print("I AM IN THE LINUX ENV")
         add_directory_to_path(python_dir)
         add_directory_to_path(os.path.join(python_dir, 'bin'))
 

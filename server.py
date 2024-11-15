@@ -7,7 +7,7 @@ app = Flask(__name__)
 # Endpoint to handle incoming text
 @app.route('/process_text', methods=['POST'])
 def process_text():
-    text = request.json.get('text')
+    text = request.json.get('text') # type: ignore
     response = test.ask_llm(text)
     print ("RESPONSE: ", response)
     
@@ -16,7 +16,7 @@ def process_text():
 
 if __name__ == "__main__":
     # Get the port number from the environment variable or default to 5000
-    port = int(os.environ.get("PORT", 2375))
+    port = int(os.environ.get("PORT", 5000))
 
     # Print the port number
     print(f"Running on port {port}")

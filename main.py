@@ -114,8 +114,8 @@ def setup_llm_retrieval():
     embeddings = HuggingFaceEmbeddings()
 
     # Convert PDFs in the folder and combine all txt files into one
-    # convert_pdfs_in_folder(data_path, data_path)
-    # combine_txt_files(data_path, os.path.join(data_path, combined_txt_file))
+    convert_pdfs_in_folder(data_path, data_path)
+    combine_txt_files(data_path, os.path.join(data_path, combined_txt_file))
 
     # Load and split documents from the combined text file
     docs = load_and_split_documents(os.path.join(data_path, combined_txt_file))

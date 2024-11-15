@@ -1,11 +1,22 @@
-faiss-gpu
-huggingface_hub
-pdfminer.six
-fitz
+# System and OS Libraries
+urllib3  # for urllib.request compatibility in newer environments
+
+# PyTorch (for deep learning and model support)
+torch  # Adjust based on your GPU compatibility (e.g., CUDA support)
+
+# LangChain Libraries
+langchain  # latest stable version
+langchain_community  # Community-contributed extensions; install manually if not available
+langchain_huggingface  # Embeddings from Hugging Face models
+
+# FAISS for vector search indexing
+faiss-cpu  # CPU-only version; use 'faiss-gpu' if you have a GPU
+
+# PyMuPDF (for PDF handling with fitz)
+pymupdf # fitz is imported as part of pymupdf
+
+# Flask (for building the web API)
 flask
-pytesseract
-pdf2image
-langchain
-langchain_community
-langchain_huggingface
-torch
+
+# Additional libraries
+# ensurepip  # Usually pre-installed with Python 3.4+; include if deploying in a custom environment

@@ -1,0 +1,19 @@
+import os
+import platform
+import torch
+from langchain.text_splitter import CharacterTextSplitter
+from langchain_community.llms import Ollama
+from langchain_community.vectorstores import FAISS
+from langchain_huggingface import HuggingFaceEmbeddings
+from langchain.chains import RetrievalQA
+import os
+import fitz
+import test
+import os
+from flask import Flask, request, jsonify
+import os
+import subprocess
+import sys
+import urllib.request
+import ensurepip
+import platform

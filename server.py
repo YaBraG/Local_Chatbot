@@ -7,11 +7,11 @@ from flask_cors import CORS
 app = Flask(__name__)
 
 CORS(app, resources={
-    r"/*": {
-        "origins": ["http://localhost:3000","https://miamibookfair2024.com/authors-chatbot"],
-        "methods": ["GET", "POST", "OPTIONS"],
-        "allow_headers": ["Content-Type"]
-    }
+    r"/*":{
+        "origins": ["http://localhost:3000","https://miamibookfair2024.com/authors-chatbot"],
+        "methods": ["GET", "POST", "OPTIONS"],
+        "allow_headers": ["Content-Type"]
+    }
 })
 
 # Endpoint to handle incoming text
@@ -22,7 +22,6 @@ def process_text():
     print ("RESPONSE: ", response)
     
     return jsonify({"processed_text": response})
-
 
 if __name__ == "__main__":
     # Get the port number from the environment variable or default to 5000

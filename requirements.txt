@@ -24,4 +24,4 @@ pymupdf # fitz is imported as part of pymupdf
 flask
 
 # Additional libraries
-ensurepip  # Usually pre-installed with Python 3.4+; include if deploying in a custom environment
+# ensurepip  # Usually pre-installed with Python 3.4+; include if deploying in a custom environment

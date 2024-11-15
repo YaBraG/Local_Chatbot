@@ -7,7 +7,9 @@
 - ollama pull llama3 
 
 **On terminal or VSCode**
-- Run main.py
+- Run program for specific pupose
+- setup.py to install requieremnts and setup envionments 
+- llm.py for testing llm
 
 **Additional PDF Upload**
 - If additional PDFs are required for upload, add PDFs to Data folder, before running main.py.

@@ -5,3 +5,5 @@ import torch
 # x = torch.rand(5, 3)
 # print(x)
 torch.cuda.empty_cache()
+print(torch.cuda.is_available())
+print(torch.cuda.device_count())

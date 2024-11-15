@@ -14,7 +14,7 @@ def ensure_pip():
         print("Pip not found. Attempting to install pip...")
         try:
             # Try to use ensurepip (built-in in Python 3.4+)
-            ensurepip.bootstrap()
+            # ensurepip.bootstrap()
             subprocess.check_call([sys.executable, "-m", "pip", "install", "--upgrade", "pip"])
             print("Pip installed successfully!")
         except (ImportError, subprocess.CalledProcessError):

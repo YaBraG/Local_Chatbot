@@ -1,7 +1,7 @@
 import os
 import sys
 import warnings
-from langchain_community.llms import Ollama
+from langchain_ollama import OllamaLLM
 from langchain_community.vectorstores import FAISS
 from langchain_huggingface import HuggingFaceEmbeddings
 from langchain.chains import RetrievalQA
@@ -43,7 +43,7 @@ def setup_llm_retrieval():
     db = FAISS.from_documents(docs, embeddings)
 
     # Pull the model using Ollama
-    llm = Ollama(model="llama3.1:8b")
+    llm = OllamaLLM(model="llama3.1:8b")
     return RetrievalQA.from_chain_type(llm, retriever=db.as_retriever())
 
 # Chat Interface with System Prompt

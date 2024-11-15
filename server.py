@@ -1,8 +1,18 @@
-import flaskLLM
 import os
+import flaskLLM
 from flask import Flask, request, jsonify
+from flask_cors import CORS
+
 
 app = Flask(__name__)
+
+CORS(app, resources={
+    r"/*": {
+        "origins": ["http://localhost:3000","https://miamibookfair2024.com/authors-chatbot"],
+        "methods": ["GET", "POST", "OPTIONS"],
+        "allow_headers": ["Content-Type"]
+    }
+})
 
 # Endpoint to handle incoming text
 @app.route('/process_text', methods=['POST'])

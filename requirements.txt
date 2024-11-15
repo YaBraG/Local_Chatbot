@@ -24,6 +24,7 @@ pymupdf # fitz is imported as part of pymupdf
 
 # Flask (for building the web API)
 flask
+flask_cors
 
 # Additional libraries
 # ensurepip  # Usually pre-installed with Python 3.4+; include if deploying in a custom environment

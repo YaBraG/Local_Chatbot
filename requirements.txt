@@ -3,7 +3,7 @@
 # platform
 # sys
 # subprocess
-shutil  # Only needed if it's not already installed
+# shutil  # Only needed if it's not already installed
 urllib3  # for urllib.request compatibility in newer environments
 
 # PyTorch (for deep learning and model support)

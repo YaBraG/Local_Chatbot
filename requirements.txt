@@ -13,6 +13,7 @@ torch  # Adjust based on your GPU compatibility (e.g., CUDA support)
 langchain  # latest stable version
 langchain_community  # Community-contributed extensions; install manually if not available
 langchain_huggingface  # Embeddings from Hugging Face models
+langchain_ollama # New Ollama with Langchain
 
 # FAISS for vector search indexing
 # faiss-cpu  # CPU-only version; use 'faiss-gpu' if you have a GPU

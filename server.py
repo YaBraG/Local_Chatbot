@@ -1,4 +1,4 @@
-import test
+import flaskLLM
 import os
 from flask import Flask, request, jsonify
 
@@ -8,7 +8,7 @@ app = Flask(__name__)
 @app.route('/process_text', methods=['POST'])
 def process_text():
     text = request.json.get('text') # type: ignore
-    response = test.ask_llm(text)
+    response = flaskLLM.ask_llm(text)
     print ("RESPONSE: ", response)
     
     return jsonify({"processed_text": response})

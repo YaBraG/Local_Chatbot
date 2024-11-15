@@ -2,7 +2,7 @@ import os
 import subprocess
 import sys
 import urllib.request
-import ensurepip
+# import ensurepip
 import platform
 
 # Install pip if not already installed

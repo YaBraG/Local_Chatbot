@@ -15,7 +15,7 @@ langchain_community  # Community-contributed extensions; install manually if not
 langchain_huggingface  # Embeddings from Hugging Face models
 
 # FAISS for vector search indexing
-faiss-cpu  # CPU-only version; use 'faiss-gpu' if you have a GPU
+# faiss-cpu  # CPU-only version; use 'faiss-gpu' if you have a GPU
 
 # PyMuPDF (for PDF handling with fitz)
 pymupdf # fitz is imported as part of pymupdf
@@ -24,4 +24,4 @@ pymupdf # fitz is imported as part of pymupdf
 flask
 
 # Additional libraries
-# ensurepip  # Usually pre-installed with Python 3.4+; include if deploying in a custom environment
+ensurepip  # Usually pre-installed with Python 3.4+; include if deploying in a custom environment

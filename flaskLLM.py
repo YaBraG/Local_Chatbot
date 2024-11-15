@@ -45,7 +45,7 @@ def setup_llm_retrieval():
     db = FAISS.from_documents(docs, embeddings)
 
     # Set up the LLM using Ollama
-    llm = Ollama(model="llama3")
+    llm = Ollama(model="llama3.1:8b")
     return RetrievalQA.from_chain_type(llm, retriever=db.as_retriever())
 
 # Chat Interface to interact with the system

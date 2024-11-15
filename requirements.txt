@@ -16,7 +16,8 @@ langchain_huggingface  # Embeddings from Hugging Face models
 langchain_ollama # New Ollama with Langchain
 
 # FAISS for vector search indexing
-# faiss-cpu  # CPU-only version; use 'faiss-gpu' if you have a GPU
+# faiss-cpu  # CPU-only version
+faiss-cpu  # GPU-only version
 
 # PyMuPDF (for PDF handling with fitz)
 pymupdf # fitz is imported as part of pymupdf
